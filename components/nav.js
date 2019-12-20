@@ -1,13 +1,38 @@
-import React from 'react'
-import Link from 'next/link'
+import React from 'react';
+import Link from 'next/link';
+import { Global, css } from '@emotion/core';
 
 const links = [
-  { href: 'https://zeit.co/now', label: 'ZEIT' },
-  { href: 'https://github.com/zeit/next.js', label: 'GitHub' },
+  { href: '/connect', label: 'Connect to external resource' },
+  { href: '/access', label: 'Use external resource' },
 ].map(link => {
-  link.key = `nav-link-${link.href}-${link.label}`
-  return link
-})
+  link.key = `nav-link-${link.href}-${link.label}`;
+  return link;
+});
+
+const globalStyle = css({
+  'body': {
+    margin: 0,
+    fontFamily: '-apple-system, BlinkMacSystemFont, Avenir Next, Avenir, Helvetica, sans-serif'
+  },
+  'nav': {
+    textAlign: 'center',
+    '& ul': {
+      display: 'flex',
+      justifyContent: 'space-between',
+      padding: '4px 16px',
+      '& li': {
+        display: 'flex',
+        padding: '6px 8px',
+        '& a': {
+          color: '#067df7',
+          textDecoration: 'none',
+          fontSize: '13px'
+        }
+      }
+    }
+  },
+});
 
 const Nav = () => (
   <nav>
@@ -24,33 +49,9 @@ const Nav = () => (
       ))}
     </ul>
 
-    <style jsx>{`
-      :global(body) {
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, Avenir Next, Avenir,
-          Helvetica, sans-serif;
-      }
-      nav {
-        text-align: center;
-      }
-      ul {
-        display: flex;
-        justify-content: space-between;
-      }
-      nav > ul {
-        padding: 4px 16px;
-      }
-      li {
-        display: flex;
-        padding: 6px 8px;
-      }
-      a {
-        color: #067df7;
-        text-decoration: none;
-        font-size: 13px;
-      }
-    `}</style>
+    <Global styles={globalStyle} />
+   
   </nav>
-)
+);
 
-export default Nav
+export default Nav;
