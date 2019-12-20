@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node ./server/server.js",
+    "dev-watch": "nodemon -w ./server/server.js ./server/server.js",
     "build": "next build",
-    "start": "next start"
+    "start": "SET NODE_ENV=production && node ./server/server.js"
   },
   "dependencies": {
     "next": "9.1.6",
