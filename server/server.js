@@ -1,11 +1,12 @@
-require('dotenv').config();
-
 const express = require('express');
 const next = require('next');
 
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const expressSession = require('express-session');
+
+require('dotenv').config();
+const routes = require('./routes');
 
 const dev = process.env.NODE_ENV !== 'production';
 
@@ -31,21 +32,26 @@ nextApp.prepare().then(() => {
   expressServer.use(bodyParser.json());
   expressServer.use(bodyParser.urlencoded({ extended: true }));
 
+  // intercept custom routes
+  expressServer.use(routes);
+
+  // all other routes go to nextjs
   expressServer.get('*', (req, res) => {
     return handle(req, res);
   });
 
   expressServer.use(function(err, req, res, next) {
     // fallback error handler
-    logger.logException(
-      `Unhandled exception caught in express fallback handler: ${err}`
+    console.log(
+      `fallback handler: ${err}`
     );
 
     if (res.headersSent) {
+      console.log(err);
       return next(err);
     } else {
-      res.status(500).send('An application error occurred. Please contact IT');
-      // res.render('error', { error: err });
+      console.log(err);
+      res.status(500).send(err);
     }
   });
 
@@ -54,6 +60,6 @@ nextApp.prepare().then(() => {
   });
 
   expressServer.on('', function(err) {
-    logger.logTrace(`Catch all handler ${err}`);
+    console.log(`last ditch handler: ${err}`);
   });
 });

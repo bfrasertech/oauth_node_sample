@@ -16,7 +16,7 @@ const heroStyle = css({
   }
 });
 
-const Home = () => (
+const Access = () => (
   <div>
     <Head>
       <title>Home</title>
@@ -26,9 +26,9 @@ const Home = () => (
     <Nav />
 
     <div css={heroStyle}>
-      <h1 className="title">AssureSign OAUTH2 Demo</h1>
+      <h1 className="title">Use external</h1>
     </div>
   </div>
 )
 
-export default Home
+export default Access
