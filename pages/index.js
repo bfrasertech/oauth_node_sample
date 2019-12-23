@@ -28,12 +28,34 @@ const Home = () => (
     <div css={heroStyle}>
       <h1 className="title">AssureSign OAUTH2 Demo</h1>
     </div>
-    <div css={{ display: 'flex', justifyContent: 'space-evenly', margin: '20px 10px 10px 10px', border: '1px solid #efefef' }}>
-      <div>
-        Access an external resource (Microsoft Graph) using On behalf of authorization grant
+    <div
+      css={{
+        display: 'flex',
+        justifyContent: 'flex-start',
+        margin: '20px 10px 10px 30px',
+      }}
+    >
+      <div css={{ width: '600px' }}>
+        Access an external resource (Microsoft Graph) using On behalf of
+        authorization grant
       </div>
       <div>
         <a href="/connect">Go</a>
+      </div>
+    </div>
+    <div
+      css={{
+        display: 'flex',
+        justifyContent: 'flex-start',
+        margin: '20px 10px 10px 30px',
+      }}
+    >
+      <div css={{ width: '600px' }}>
+        Grant external resource access to AssureSign via on behalf of
+        authorization grant
+      </div>
+      <div>
+        <a href="/inbound_connect">Go</a>
       </div>
     </div>
   </div>

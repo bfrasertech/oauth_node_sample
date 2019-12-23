@@ -64,6 +64,12 @@ router.get('/connect', function(req, res, next) {
   );
 });
 
+router.get('/inbound_connect', function(req, res, next) {
+  res.redirect(
+    `${config.aad.authEndpoint}?state=${config.aad.state}&scope=${config.inboundAAD.scopes}&response_type=code&client_id=${config.inboundAAD.clientID}&redirect_uri=${config.inboundAAD.redirectUri}`
+  );
+});
+
 // endpoint that AAD calls back into with
 router.get('/callback', async function(req, res, next) {
   const code = req.query['code'];
@@ -116,6 +122,54 @@ router.get('/callback', async function(req, res, next) {
   }
 });
 
+router.get('/inbound_callback', async function(req, res, next) {
+  const code = req.query['code'];
+  const state = req.query['state'];
+
+  const formData = {
+    client_id: config.inboundAAD.clientID,
+    grant_type: 'authorization_code',
+    code: code,
+    redirect_uri: config.inboundAAD.redirectUri,
+    client_secret: config.inboundAAD.clientSecret,
+    aud: 'api://751982b4-7adf-4033-8e92-f4b95b51f943/read',
+  };
+
+  if (state === config.aad.state) {
+    const postData = qs.stringify(formData);
+
+    const response = await fetch(config.aad.tokenEndpoint, {
+      headers: {
+        accept: 'application/x-www-form-urlencoded;charset=utf-8',
+        'content-type': 'application/x-www-form-urlencoded',
+        'accept-encoding': 'utf-8',
+      },
+      method: 'post',
+      body: postData,
+    });
+
+    const responseText = await response.text();
+    const responseObject = JSON.parse(responseText);
+
+    const apiResponse = await fetch('http://localhost:3000/api/test', {
+      headers: {
+        accept: 'application/json',
+        authorization: `Bearer ${responseObject.access_token}`,
+      },
+      method: 'get',
+    });
+
+    const apiResponseText = await apiResponse.text();
+    const apiResponseObject = JSON.parse(apiResponseText);
+
+    res.send({
+      result: apiResponseObject.result,
+    });
+  } else {
+    res.send();
+  }
+});
+
 router.post('/api/test', async (req, res) => {
   const authToken = req.headers.authorization.split(' ')[1];
 
@@ -142,6 +196,34 @@ router.post('/api/test', async (req, res) => {
 
   const decodedJwt = jwt.decode(authToken);
   res.send({ result: `Congrats ${decodedJwt.upn} posted: ${req.body.data}` });
+});
+
+router.get('/api/test', async (req, res) => {
+  const authToken = req.headers.authorization.split(' ')[1];
+
+  // access the config endpoint to get the keys uri
+  const openIdConfig = await getOpenIDConfig();
+
+  // get the list of keys used to sign the jwt. use the kid value in the jwt header
+  // to identify which key in this list was used
+  const keys = await getKeys(openIdConfig.jwks_uri);
+
+  keys.keys.forEach(function(key) {
+    key.x5c.forEach(function(keyItem) {
+      let secret = keyItem;
+
+      try {
+        // temporarily skipping verification. it currently fails but would most likely be handled by a library such as passport or msal
+        // const cert = convertCertificate(secret);
+        // const verified = jwt.verify(authToken, cert, { algorithms: ['RS256','RS384','RS512','ES256','ES384','ES512'] });
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  });
+
+  const decodedJwt = jwt.decode(authToken);
+  res.send({ result: `Congrats ${decodedJwt.upn} successfully called api` });
 });
 
 module.exports = router;
