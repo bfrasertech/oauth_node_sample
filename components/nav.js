@@ -2,14 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import { Global, css } from '@emotion/core';
 
-const links = [
-  { href: '/connect', label: 'Connect to external resource' },
-  { href: '/access', label: 'Use external resource' },
-].map(link => {
-  link.key = `nav-link-${link.href}-${link.label}`;
-  return link;
-});
-
 const globalStyle = css({
   'body': {
     margin: 0,
@@ -42,11 +34,6 @@ const Nav = () => (
           <a>Home</a>
         </Link>
       </li>
-      {links.map(({ key, href, label }) => (
-        <li key={key}>
-          <a href={href}>{label}</a>
-        </li>
-      ))}
     </ul>
 
     <Global styles={globalStyle} />

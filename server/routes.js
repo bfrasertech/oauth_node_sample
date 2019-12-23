@@ -8,15 +8,12 @@ const config = require('../config');
 const router = express.Router();
 
 getOpenIDConfig = async () => {
-  const response = await fetch(
-    config.aad.openIDConfigEndpoint,
-    {
-      headers: {
-        accept: 'application/json',
-      },
-      method: 'get',
-    }
-  );
+  const response = await fetch(config.aad.openIDConfigEndpoint, {
+    headers: {
+      accept: 'application/json',
+    },
+    method: 'get',
+  });
 
   return await response.json();
 };
@@ -97,9 +94,6 @@ router.get('/callback', async function(req, res, next) {
     const responseText = await response.text();
     const responseObject = JSON.parse(responseText);
 
-    const buffer = new Buffer(responseObject.access_token, 'base64');
-    const decodedJwt = buffer.toString('utf-8');
-
     const graphResponse = await fetch('https://graph.microsoft.com/v1.0/me/', {
       headers: {
         accept: 'application/json',
@@ -110,7 +104,13 @@ router.get('/callback', async function(req, res, next) {
 
     const graphResponseText = await graphResponse.text();
     const graphResponseObject = JSON.parse(graphResponseText);
-    res.send(graphResponseObject.displayName);
+
+    res.send({
+      displayName: graphResponseObject.displayName,
+      email: graphResponseObject.mail,
+      upn: graphResponseObject.userPrincipalName,
+      oid: graphResponseObject.id,
+    });
   } else {
     res.send();
   }

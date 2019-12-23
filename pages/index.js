@@ -1,6 +1,6 @@
-import React from 'react'
-import Head from 'next/head'
-import Nav from '../components/nav'
+import React from 'react';
+import Head from 'next/head';
+import Nav from '../components/nav';
 import { css } from '@emotion/core';
 
 const heroStyle = css({
@@ -12,8 +12,8 @@ const heroStyle = css({
     paddingTop: '80px',
     lineHeight: '1.15',
     fontsize: '48px',
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
 
 const Home = () => (
@@ -28,7 +28,15 @@ const Home = () => (
     <div css={heroStyle}>
       <h1 className="title">AssureSign OAUTH2 Demo</h1>
     </div>
+    <div css={{ display: 'flex', justifyContent: 'space-evenly', margin: '20px 10px 10px 10px', border: '1px solid #efefef' }}>
+      <div>
+        Access an external resource (Microsoft Graph) using On behalf of authorization grant
+      </div>
+      <div>
+        <a href="/connect">Go</a>
+      </div>
+    </div>
   </div>
-)
+);
 
-export default Home
+export default Home;
